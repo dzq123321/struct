@@ -26,6 +26,12 @@ bool DListInsertByVal(DList *pdlist, DataType x);
 bool DListDeleteByPos(DList *pdlist, size_t pos);
 DListNode *DListFindByVal(DList *pdlist, DataType x);
 bool DListDeleteByVal(DList *pdlist, DataType x);
+bool DListReverse(DList *pdlist);
+bool DListSort(DList *pdlist);
+bool modify_val(DList *pdlist, DataType x,DataType y);
+bool DListClear(DList *pdlist);
+void DListDestroy(DList *pdlist);
+
 DListNode *_BuyNode(DataType x)
 {
 	DListNode *s = (DListNode*)malloc(sizeof(DListNode));
@@ -114,7 +120,7 @@ bool DListPopFront(DList *pdlist)
 		pdlist->first->next = p->next;
 		p->next->prev = pdlist->first;
 		free(p);
-		p == NULL;
+		p = NULL;
 		pdlist->size--;
 		return true;
 	}
@@ -215,5 +221,95 @@ bool DListInsertByVal(DList *pdlist, DataType x)
 	}
 }
 
+bool DListReverse(DList *pdlist)//逆序有两种方法，第一种是从第二个节点断开然后一个个头插，第二种是用三个指针p1p2p3,将原始的p1->p2变为p2->p1
+{
+	DListNode *p = pdlist->first->next;    //p3来记录p2的下一个位置（第二种方法当是单链表的时候还可以，当时双链表的时候改变的指针过多易出错）
+	DListNode *q = p->next;
+	pdlist->last = p;
+	pdlist->last->next = NULL;
+	p = q;
+	if (pdlist->size > 1)
+	{
+		while (p != NULL)
+		{
+			q = q->next;
+			p->next = pdlist->first->next;
+			p->next->prev = p;
+			p->prev = pdlist->first;
+			p->prev->next = p;
+			p= q;
+		}
+		return true;
+	}
+}
+
+
+bool DListSort(DList *pdlist)
+{
+	DListNode *p = pdlist->first->next;
+	DListNode *q = p->next;
+	DListNode *front = NULL;
+	pdlist->last = p;
+	pdlist->last->next = NULL;
+	p = q;
+	if (pdlist->size > 1)
+	{
+		while (p != NULL)
+		{
+			q = q->next;
+			front = pdlist->first;
+			while (front->next != NULL && front->next->data < p->data)
+				front = front->next;
+			if (front->next == NULL)
+			{
+				front->next = p;
+				p->prev = front;
+				p->next = NULL;
+				pdlist->last = p;
+			}
+			else
+			{
+				p->next = front->next;
+				p->next->prev = p;
+				p->prev = front;
+				p->prev->next = p;
+			}
+			p = q;
+		}
+		return true;
+	}
+}
+
+bool modify_val(DList *pdlist, DataType x, DataType y)
+{
+	DListNode *p = NULL;
+	p = DListFindByVal(pdlist, x);
+	if (p == NULL)
+		return false;
+
+	p->data = y;
+	return true;
+}
+bool DListClear(DList *pdlist)
+{
+	DListNode *p = pdlist->first->next;
+	while (p != NULL)
+	{
+		pdlist->first->next = p->next;
+		//p->next->prev = pdlist->first;   这句话不能要，因为有可能first->next=null,所以不能null->prev ,因为你是清除不是删除，所以不用都连起来
+		free(p);
+		p = pdlist->first->next;
+	}
+	pdlist->last = pdlist->first;
+	pdlist->size = 0;
+	return true;
+}
+
+void DListDestroy(DList *pdlist)
+{
+	DListClear(pdlist);
+	free(pdlist->first);
+	pdlist->first = pdlist->last = NULL;
+}
 #endif
 #endif

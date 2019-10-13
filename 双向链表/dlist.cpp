@@ -98,17 +98,24 @@ int main()
 				printf("数据所在的下标为:> %d\n", pos);
 			break;*/
 		case 12:
-			//SCListSort(&myclist);
+			DListSort(&mydlist);
 			break;
 		case 13:
-			//SCListReverse(&myclist);
+			DListReverse(&mydlist);
 			break;
 		case 14:
 			//printf("SeqList Length = %d\n", SCListLength(&myclist));
 			break;
 		case 15:
 
-			//SCListClear(&myclist);
+			DListClear(&mydlist);
+			break;
+		case 17:
+			printf("请输入原始的值->");
+			scanf("%d", &item);
+			printf("请输入变化的值->");
+			scanf("%d",&ret);
+			modify_val(&mydlist, item, ret);
 			break;
 		case 18:
 			//printf("capacity = %d\n", SeqListCapacity(&mylist));
@@ -120,6 +127,6 @@ int main()
 		system("pause");
 		system("cls");
 	}
-	//SCListDestroy(&myclist);
+	DListDestroy(&mydlist);
 	return 0;
 }
