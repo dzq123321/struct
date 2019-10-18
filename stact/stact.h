@@ -10,11 +10,13 @@ typedef struct ListNode
 	DataType data;
 	ListNode *next;
 }ListNode;
+#if 0
 typedef ListNode*  ListStact;  
 void ListStactInit(ListStact *plt);
 void ListStactPush(ListStact *plt, DataType item);
 void ListStactshow(ListStact *plt);
 void ListStactPop(ListStact *plt);
+void ListStactempty(ListStact *plt);
 
 void ListStactInit(ListStact *plt)   // plt是二级指针，是指向ListNode*指针的指针，所以在想指向（比如->data//->next）的时候,必须变为ListNode*
 {
@@ -45,8 +47,20 @@ void ListStactPop(ListStact *plt)
 	free(p);
 	p = NULL;
 }
+
+void ListStactempty(ListStact *plt)
+{
+	ListNode* p = (*plt);
+	while (p != NULL)
+	{
+		(*plt) = p->next;
+		free(p);
+		p = (*plt);
+	}
+}
+#endif
 //顺序栈
-#if 0
+#if 1
 typedef struct seqstact
 {
 
@@ -56,10 +70,22 @@ typedef struct seqstact
 }Seqstact;
 
 
-void StactPush(Seqstact* pst, DataType data);
-void StactInit(Seqstact* pst, int data);
-void StactShow(Seqstact* pst);
+void SeqStactPush(Seqstact* pst, DataType data);
+void SeqStactInit(Seqstact* pst, int data);
+void SeqStactShow(Seqstact* pst);
+seqstact* Seqstactcreat(int x);
+void SeqStactPop(Seqstact* pst);
 
+seqstact* Seqstactcreat(int x)
+{
+	seqstact* mystact = (seqstact*)malloc(sizeof(seqstact));
+	if (mystact == NULL)
+		return NULL;
+	mystact->capacity = x > DEFAULE_SIZE ? x : DEFAULE_SIZE;
+	mystact->base = (DataType*)malloc(sizeof(DataType)*mystact->capacity);
+	mystact->top = 0;
+	return mystact;
+}
 bool _StactIsFull(Seqstact* pst)
 {
 	if (pst->top >= pst->capacity)
@@ -83,14 +109,14 @@ bool _StactINC(Seqstact* pst)
 	return true;
 }
 
-void StactInit(Seqstact* pst, int sz)
+void SeqStactInit(Seqstact* pst, int sz)
 {
 	pst->capacity = sz > DEFAULE_SIZE ? sz : DEFAULE_SIZE;  //至少开辟DEFAULE_SIZE个空间
 	pst->base = (DataType*)malloc(sizeof(DataType)* pst->capacity);
 	pst->top = 0;
 }
 
-void StactPush(Seqstact* pst, DataType data)
+void SeqStactPush(Seqstact* pst, DataType data)
 {
 	if (_StactIsFull(pst) && !_StactINC(pst))
 	{
@@ -99,16 +125,25 @@ void StactPush(Seqstact* pst, DataType data)
 	pst->base[pst->top++] = data;
 }
 
-void StactShow(Seqstact* pst)
+void SeqStactShow(Seqstact* pst)
 {
-	int i = 0;
-	for (; i < pst->top; i++)
+	int i = pst->top-1;
+	for (; i >=0; i--)
 	{
-		printf("%d ", pst->base[i]);
+		printf("%d-- ", pst->base[i]);
 	}
+	printf("\n");
 }
 
-
+void SeqStactPop(Seqstact* pst)
+{
+	if (_StactIsEmpty(pst) )
+	{
+		printf("表为空\n");
+		return;
+	}
+	pst->top--;
+}
 #endif
 
 #endif
