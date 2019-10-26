@@ -169,4 +169,293 @@ void myStackFree(MyStack* obj) {
 	obj = NULL;
 }
 #endif
+#if 0  //设计一个支持 push，pop，top 操作，并能在常数时间内检索到最小元素的栈https://leetcode-cn.com/problems/min-stack/
+typedef struct stact
+{
+    int *base;
+    int capacity;
+    int top;
+}stact;
+bool StactIsFull (stact *pst)
+{
+    return pst->top >= pst-> capacity;
+}
+bool StactIsEmpty (stact *pst)
+{
+    return pst -> top == 0;
+}
+stact * StactCreat()
+{
+    stact *pst =(stact*) malloc(sizeof(stact));
+    if(pst == NULL)
+        return NULL;
+    pst ->capacity = 100;
+    pst ->base = (int*)malloc(sizeof(int)*pst->capacity);
+    pst -> top = 0;
+    return pst;
+}
+void StactPush (stact *pst,int data)
+{
+    if(StactIsFull (pst))
+        return;
+    pst-> base[pst->top++]=data;
+}
+void StactPop (stact *pst)
+{
+    if(StactIsEmpty(pst))
+        return ;
+    pst->top--;
+}
+int Stacttop(stact *pst)
+{
+    assert(pst->top !=0);
+    return pst->base[pst->top-1];
+}
 
+typedef struct {
+    stact *mystact;
+    stact *minstact;
+    
+} MinStack;
+
+/** initialize your data structure here. */
+
+MinStack* minStackCreate() {
+    MinStack *mins =(MinStack*)malloc(sizeof(MinStack));
+    mins ->mystact=StactCreat();
+    mins ->minstact=StactCreat();
+    return mins;
+}
+
+void minStackPush(MinStack* obj, int x) {
+    StactPush(obj->mystact,x);
+    if(StactIsEmpty(obj->minstact) || x<=Stacttop(obj->mystact))
+        StactPush(obj->minstact,x);
+}
+
+void minStackPop(MinStack* obj) {
+    int val =Stacttop(obj->mystact);
+    StactPop (obj->mystact);
+    if(val == Stacttop(obj->minstact))
+    {
+        StactPop(obj->minstact);
+    }
+  
+}
+
+int minStackTop(MinStack* obj) {
+  return Stacttop(obj->mystact);
+}
+
+int minStackGetMin(MinStack* obj) {
+    
+  return Stacttop(obj->minstact);
+}
+
+void minStackFree(MinStack* obj) {
+    obj->mystact ->top= obj->mystact ->capacity=obj->minstact ->top=obj->minstact ->capacity=0;
+    free(obj -> mystact);
+    free(obj -> minstact);
+    free(obj);
+    
+}
+
+/**
+ * Your MinStack struct will be instantiated and called as such:
+ * MinStack* obj = minStackCreate();
+ * minStackPush(obj, x);
+ 
+ * minStackPop(obj);
+ 
+ * int param_3 = minStackTop(obj);
+ 
+ * int param_4 = minStackGetMin(obj);
+ 
+ * minStackFree(obj);
+*/
+#endif
+//用栈实现队列 思路：用两个栈来实现 https://leetcode-cn.com/problems/implement-queue-using-stacks/
+#if 0
+typedef struct seqstact
+{
+	int *base;
+	size_t capacity;
+	int top;
+}Seqstact;
+bool _StactIsFull(Seqstact* pst)
+
+{
+	if (pst->top >= pst->capacity)
+		return true;
+	return false;
+}
+bool _StactIsEmpty(Seqstact* pst)
+{
+	if (pst->top == 0)
+		return true;
+	return false;
+}
+
+void SeqStactInit(Seqstact* pst )
+{
+	pst->capacity = 100;
+	pst->base = (int*)malloc(sizeof(int)* pst->capacity);
+	pst->top = 0;
+}
+
+void SeqStactPush(Seqstact* pst, int data)
+{
+	if (_StactIsFull(pst))
+	{
+		printf("表以满\n");
+	}
+	pst->base[pst->top++] = data;
+}
+void SeqStactPop(Seqstact* pst)
+{
+	if (_StactIsEmpty(pst) )
+	{
+		printf("表为空\n");
+		return;
+	}
+	pst->top--;
+}
+int SeqStacttop (Seqstact* pst)
+{
+    return pst ->base[pst -> top--];
+}
+bool SeqStactfree (Seqstact* pst)
+{
+    free(pst ->base);
+        pst->base =NULL;
+    return true;
+}
+typedef struct myqueue
+{
+    Seqstact s1;
+    Seqstact s2;
+}MyQueue;
+
+/** Initialize your data structure here. */
+
+MyQueue* myQueueCreate() {
+      MyQueue *pmq = (MyQueue*)malloc(sizeof(MyQueue));
+        SeqStactInit(&( pmq ->s1));
+       SeqStactInit(&( pmq ->s2));  
+        return pmq;
+}
+
+/** Push element x to the back of queue. */
+void myQueuePush(MyQueue* obj, int x) {
+    Seqstact *pempty ;
+        Seqstact*pnoempty;
+        if(_StactIsFull(&( obj ->s1)  )) 
+        {
+         pempty =  &(obj ->s1) ;
+            pnoempty =  &(obj ->s2) ;
+            
+        }
+        else
+        {
+            pempty =  &(obj ->s2) ;
+            pnoempty =  &(obj ->s1) ; 
+        }
+     SeqStactPush(pnoempty, x);
+}
+
+/** Removes the element from in front of queue and returns that element. */
+int myQueuePop(MyQueue* obj) {
+     Seqstact *pempty ;
+        Seqstact*pnoempty;
+    int val;
+        if(_StactIsFull(&( obj ->s1)  )) 
+        {
+         pempty =  &(obj ->s1) ;
+            pnoempty =  &(obj ->s2) ;
+            
+        }
+        else
+        {
+            pempty =  &(obj ->s2) ;
+            pnoempty =  &(obj ->s1) ; 
+        }
+      while(!_StactIsEmpty(pnoempty))
+      {
+          val =SeqStacttop (pnoempty);
+          SeqStactPop(pnoempty);
+          if(!_StactIsEmpty(pnoempty))
+          SeqStactPush(pempty,val);
+      }
+          while(!_StactIsEmpty(pempty))
+      {
+          val =SeqStacttop (pempty);
+          SeqStactPop(pempty);
+          SeqStactPush(pnoempty,val);
+      }
+  return 1;
+}
+
+/** Get the front element. */
+int myQueuePeek(MyQueue* obj) {
+    
+  Seqstact *pempty ;
+        Seqstact*pnoempty;
+    int val,t;
+        if(_StactIsFull(&( obj ->s1)  )) 
+        {
+         pempty =  &(obj ->s1) ;
+            pnoempty =  &(obj ->s2) ;
+            
+        }
+        else
+        {
+            pempty =  &(obj ->s2) ;
+            pnoempty =  &(obj ->s1) ; 
+        }
+      while(!_StactIsEmpty(pnoempty))
+      {
+          val =SeqStacttop (pnoempty);
+          SeqStactPop(pnoempty);
+          SeqStactPush(pempty,val);
+      }
+    t = val;
+         while(!_StactIsEmpty(pempty))
+      {
+          val =SeqStacttop (pempty);
+          SeqStactPop(pempty);
+          SeqStactPush(pnoempty,val);
+      }
+    return 1;
+    
+}
+
+/** Returns whether the queue is empty. */
+bool myQueueEmpty(MyQueue* obj) {
+    if(_StactIsFull(&( obj ->s1))&&_StactIsFull(&( obj ->s2)) )
+        return false;
+    return true;;
+  
+}
+
+void myQueueFree(MyQueue* obj) {
+    SeqStactfree((&( obj ->s1)));
+           SeqStactfree((&( obj ->s2)));          
+    free(obj);
+    obj =NULL;
+    
+}
+
+/**
+ * Your MyQueue struct will be instantiated and called as such:
+ * MyQueue* obj = myQueueCreate();
+ * myQueuePush(obj, x);
+ 
+ * int param_2 = myQueuePop(obj);
+ 
+ * int param_3 = myQueuePeek(obj);
+ 
+ * bool param_4 = myQueueEmpty(obj);
+ 
+ * myQueueFree(obj);
+*/
+#endif
