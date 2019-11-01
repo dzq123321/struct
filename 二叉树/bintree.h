@@ -36,6 +36,16 @@ void LevleOrder(BinTree *t);
 
 BinTreeNode* _Find(BinTreeNode* t,DataType key);
 BinTreeNode* Find(BinTree* t,DataType key);
+BinTreeNode* _Parent(BinTreeNode *t, DataType key);
+BinTreeNode* Parent(BinTree *t, DataType key);
+BinTreeNode* _Clone(BinTreeNode *t);
+void Clone(BinTree *t1, BinTree *t2);
+bool _Equal(BinTreeNode *t1, BinTreeNode *t2);// true false
+
+bool Equal(BinTree *t1, BinTree *t2);// true false
+
+void _PreoderNor(BinTreeNode *t);
+void PreoderNor(BinTree *t);
 
 void BinTreeInit(BinTree *t)
 {
@@ -46,30 +56,6 @@ void BinTreeCreate(BinTree *t)
 {
 	//_BinTreeCreate(&t->root);
 	t->root = _BinTreeCreate_2();
-}
-
-BinTreeNode* _BinTreeCreateByStr (char* str)  //递归需要变换参数时可以用static或者全局变量
-{
-	static int i =0;
-	BinTreeNode *t;
-	if( str[i] == '\0' || str[i] == '#' )
-		return NULL;
-	else
-	{
-		t=(BinTreeNode*)malloc(sizeof(BinTreeNode));
-		assert(t != NULL);
-		t->data = str[i];
-		i++;
-		t->leftChild = _BinTreeCreateByStr (str);
-		i++;
-		t->rightChild = _BinTreeCreateByStr (str);
-		return t;
-	}
-}
-
-void BinTreeCreateByStr(BinTree *t, char *str)
-{
-	t->root = _BinTreeCreateByStr(str);
 }
 void _BinTreeCreate_1(BinTreeNode **t)
 {
@@ -100,10 +86,37 @@ BinTreeNode* _BinTreeCreate_2()
 	{
 		BinTreeNode *t = (BinTreeNode*)malloc(sizeof(BinTreeNode));
 		assert(t != NULL);
-
+		t->data = item;
+		t->leftChild = _BinTreeCreate_2();
+		t->rightChild = _BinTreeCreate_2();
 		return t;
 	}
 }
+
+BinTreeNode* _BinTreeCreateByStr (char* str)  //递归需要变换参数时可以用static或者全局变量
+{
+	static int i =0;
+	BinTreeNode *t;
+	if( str[i] == '\0' || str[i] == '#' )
+		return NULL;
+	else
+	{
+		t=(BinTreeNode*)malloc(sizeof(BinTreeNode));
+		assert(t != NULL);
+		t->data = str[i];
+		i++;
+		t->leftChild = _BinTreeCreateByStr (str);
+		i++;
+		t->rightChild = _BinTreeCreateByStr (str);
+		return t;
+	}
+}
+
+void BinTreeCreateByStr(BinTree *t, char *str)
+{
+	t->root = _BinTreeCreateByStr(str);
+}
+
 void _PreOrder(BinTreeNode *t)//二叉树的四种遍历，前序 中序 后序 按层遍历
 {
 	if(t != NULL )
@@ -135,8 +148,8 @@ void _PostOrder(BinTreeNode *t)
 {
 		if(t != NULL )
 	{
+        _PreOrder(t->leftChild);
 		_PreOrder(t->rightChild);
-		_PreOrder(t->leftChild);
 		printf("%c ", t->data);				
 	}
 }
@@ -207,7 +220,6 @@ BinTreeNode* _Find(BinTreeNode* t,DataType key)
 	if(p != NULL)
 		return p;
 	return _Find(t->rightChild, key);
-
 }
 BinTreeNode* Find(BinTree* t,DataType key)
 {
@@ -215,4 +227,126 @@ BinTreeNode* Find(BinTree* t,DataType key)
 	return pos;
 }
 
+BinTreeNode* _Parent(BinTreeNode *t, DataType key)
+{
+	BinTreeNode* pr;
+	BinTreeNode* p = _Find(t, key);
+	if (p == NULL || t == NULL || p == t)
+		return NULL;
+	if (t->leftChild == p || t->rightChild == p)
+		return t;
+	pr = _Parent(t->leftChild, key);
+	if (pr != NULL)
+		return pr;
+	return _Parent(t->rightChild, key);
+
+}
+BinTreeNode* Parent(BinTree *t, DataType key)
+{
+	return  _Parent(t->root, key);
+}
+
+BinTreeNode* _Clone(BinTreeNode *t)
+{
+	if (t == NULL)
+		return NULL;
+	BinTreeNode* p = (BinTreeNode*)malloc(sizeof(BinTreeNode));
+	assert(t != NULL);
+	p->data = t->data;
+	p->leftChild = _Clone(t->leftChild);
+	p->rightChild = _Clone(t->rightChild);
+	return p;
+
+}
+void Clone(BinTree *t1, BinTree *t2)
+{
+	t2->root = _Clone(t1->root);
+}
+bool _Equal(BinTreeNode *t1, BinTreeNode *t2)// true false
+{
+	if (t1 == NULL && t2 == NULL)
+		return true;
+	if (t1 == NULL || t2 == NULL)
+		return false;
+	return (t1->data == t2->data) && _Equal(t1->leftChild, t2->leftChild)
+		&& _Equal(t1->rightChild, t2->rightChild);
+}
+
+bool Equal(BinTree *t1, BinTree *t2)// true false
+{
+	return _Equal(t1->root, t2->root);
+}
+
+#include "stact.h"
+void _PreoderNor(BinTreeNode *t)
+{
+	if (t != NULL)
+	{
+		BinTreeNode* q;
+		ListStact mystact;
+		ListStactInit(&mystact);
+		ListStactPush(&mystact, t);
+		while (!(ListStactEmpty(&mystact)))
+		{
+			q = ListStactTop(&mystact); 
+			ListStactPop(&mystact);
+			printf("%c ", q->data);
+			if(q->rightChild != NULL)
+				ListStactPush(&mystact, q->rightChild);
+			if (q->leftChild != NULL)
+				ListStactPush(&mystact, q->leftChild);
+		}
+	}
+}
+void PreoderNor(BinTree *t)
+{
+	_PreoderNor(t->root);
+}
+
+
+void _InOrderNoR(BinTreeNode *t);
+void InOrderNoR(BinTree *t);
+//void _PostOrderNoR(BinTreeNode *t);
+//void PostOrderNoR(BinTree *t);
+void _InOrderNoR(BinTreeNode *t)
+{
+	if (t != NULL)
+	{
+		if (t->leftChild != NULL)
+		{
+			_PreoderNor(t->leftChild);
+		}
+		printf("%c ", t->data);
+		if (t->rightChild != NULL)
+		{
+			_PreoderNor(t->rightChild);
+		}
+	}
+
+}
+void InOrderNoR(BinTree *t)
+{
+	_InOrderNoR(t->root);
+}
+
+
+void _PostOrderNoR(BinTreeNode *t)
+{
+	if (t != NULL)
+	{
+		if (t->leftChild != NULL)
+		{
+			_PreoderNor(t->leftChild);
+		}
+		if (t->rightChild != NULL)
+		{
+			_PreoderNor(t->rightChild);
+		}
+		printf("%c ", t->data);
+	}
+}
+void PostOrderNoR(BinTree *t)
+{
+	_PostOrderNoR(t->root);
+}
 #endif

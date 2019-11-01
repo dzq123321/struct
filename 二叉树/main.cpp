@@ -2,9 +2,10 @@
 int main()
 {
 	char *str = "ABC##DE##F##G#H##";
-	BinTree bt;
+	BinTree bt,bt2;
 	DataType key = 'D';
 	BinTreeInit(&bt);
+	BinTreeInit(&bt2);
 	//BinTreeCreate(&bt);
 	BinTreeCreateByStr(&bt, str);
 	printf("VLR:");
@@ -22,6 +23,22 @@ int main()
 	printf("height = %d\n",Height(&bt));
 	printf("num= %d\n",num(&bt));
 	printf("val=%c\n",Find(&bt,key)->data);
+	printf("val=%c\n", Parent(&bt, key)->data);
+	Clone(&bt, &bt2);
+	printf("VLR:");
+	PreOrder(&bt2);
+	printf("\n");
+	if (Equal(&bt, &bt2))
+		printf("ПаµИ\n");
+	printf("-----------------------------------\n");
+	printf("VLR:");
+	PreoderNor(&bt);
+	printf("\n");
+	printf("LVR:");
+	InOrderNoR(&bt);
+	printf("\n");
+	printf("LRV:");
+	PostOrderNoR(&bt);
+	printf("\n");
 	return 0;
-
 }
