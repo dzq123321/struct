@@ -6,6 +6,11 @@
 #include<stdlib.h>
 #include<assert.h>
 #define DataType char
-
+void Swap(DataType *a, DataType *b)
+{
+	DataType tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
 
 #endif

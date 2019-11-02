@@ -1,6 +1,6 @@
 #ifndef BINTREE_H_
-#define BINTREE_H_
-#include"common.h"
+#define BINTREE_H_  //完全二叉树  log2 (n) +1  《-知道节点个数深度为       子树和双亲结点为2倍的关系（从1开始编号）
+#include"common.h"          //（从0开始编号） 关系（i-1）/2
 
 //ABC##DE##F##G#H##
 
@@ -20,22 +20,22 @@ void _BinTreeCreate_1(BinTreeNode **t);
 void BinTreeCreateByStr(BinTree *t, char *str);
 BinTreeNode* _BinTreeCreate_2();
 void BinTreeCreate(BinTree *t);
-BinTreeNode* _BinTreeCreateByStr (BinTreeNode* t);
+BinTreeNode* _BinTreeCreateByStr(BinTreeNode* t);
 void _PreOrder(BinTreeNode *t);
 void PreOrder(BinTree *t);
 void _InOrder(BinTreeNode *t);
 void InOrder(BinTree *t);
 void _PostOrder(BinTreeNode *t);
 void PostOrder(BinTree *t);
-size_t _num (BinTreeNode* t);
+size_t _num(BinTreeNode* t);
 size_t num(BinTree *t);
-size_t _Height (BinTreeNode* t);
+size_t _Height(BinTreeNode* t);
 size_t Height(BinTree *t);
 void _LevleOrder(BinTreeNode *t);
 void LevleOrder(BinTree *t);
 
-BinTreeNode* _Find(BinTreeNode* t,DataType key);
-BinTreeNode* Find(BinTree* t,DataType key);
+BinTreeNode* _Find(BinTreeNode* t, DataType key);
+BinTreeNode* Find(BinTree* t, DataType key);
 BinTreeNode* _Parent(BinTreeNode *t, DataType key);
 BinTreeNode* Parent(BinTree *t, DataType key);
 BinTreeNode* _Clone(BinTreeNode *t);
@@ -46,6 +46,13 @@ bool Equal(BinTree *t1, BinTree *t2);// true false
 
 void _PreoderNor(BinTreeNode *t);
 void PreoderNor(BinTree *t);
+void _InorderNor(BinTreeNode *t);
+void InorderNor(BinTree *t);
+void _PostorderNor(BinTreeNode *t);
+void PostorderNor(BinTree *t);
+
+BinTreeNode* _BinTreeNodeCreateBy_VLR_LVR(char *vlr, char *lrv, int n);
+void BinTreeNodeCreateBy_VLR_LVR(BinTree *t, char *vlr, char *lvr, int n);
 
 void BinTreeInit(BinTree *t)
 {
@@ -61,10 +68,10 @@ void _BinTreeCreate_1(BinTreeNode **t)
 {
 	DataType item;
 	scanf("%c", &item);
-	if(item == '#')
+	if (item == '#')
 	{
 		*t = NULL;
-	}	
+	}
 	else
 	{
 		*t = (BinTreeNode*)malloc(sizeof(BinTreeNode));
@@ -78,7 +85,7 @@ BinTreeNode* _BinTreeCreate_2()
 {
 	DataType item;
 	scanf("%c", &item);
-	if(item == '#')
+	if (item == '#')
 	{
 		return NULL;
 	}
@@ -93,21 +100,21 @@ BinTreeNode* _BinTreeCreate_2()
 	}
 }
 
-BinTreeNode* _BinTreeCreateByStr (char* str)  //递归需要变换参数时可以用static或者全局变量
+BinTreeNode* _BinTreeCreateByStr(char* str)  //递归需要变换参数时可以用static或者全局变量
 {
-	static int i =0;
+	static int i = 0;
 	BinTreeNode *t;
-	if( str[i] == '\0' || str[i] == '#' )
+	if (str[i] == '\0' || str[i] == '#')
 		return NULL;
 	else
 	{
-		t=(BinTreeNode*)malloc(sizeof(BinTreeNode));
+		t = (BinTreeNode*)malloc(sizeof(BinTreeNode));
 		assert(t != NULL);
 		t->data = str[i];
 		i++;
-		t->leftChild = _BinTreeCreateByStr (str);
+		t->leftChild = _BinTreeCreateByStr(str);
 		i++;
-		t->rightChild = _BinTreeCreateByStr (str);
+		t->rightChild = _BinTreeCreateByStr(str);
 		return t;
 	}
 }
@@ -119,7 +126,7 @@ void BinTreeCreateByStr(BinTree *t, char *str)
 
 void _PreOrder(BinTreeNode *t)//二叉树的四种遍历，前序 中序 后序 按层遍历
 {
-	if(t != NULL )
+	if (t != NULL)
 	{
 		printf("%c ", t->data);
 		_PreOrder(t->leftChild);
@@ -133,11 +140,11 @@ void PreOrder(BinTree *t)
 
 void _InOrder(BinTreeNode *t)
 {
-		if(t != NULL )
+	if (t != NULL)
 	{
-		_PreOrder(t->leftChild);
-		printf("%c ", t->data);		
-		_PreOrder(t->rightChild);
+		_InOrder(t->leftChild);
+		printf("%c ", t->data);
+		_InOrder(t->rightChild);
 	}
 }
 void InOrder(BinTree *t)
@@ -146,11 +153,11 @@ void InOrder(BinTree *t)
 }
 void _PostOrder(BinTreeNode *t)
 {
-		if(t != NULL )
+	if (t != NULL)
 	{
-        _PreOrder(t->leftChild);
-		_PreOrder(t->rightChild);
-		printf("%c ", t->data);				
+		_PostOrder(t->leftChild);
+		_PostOrder(t->rightChild);
+		printf("%c ", t->data);
 	}
 }
 void PostOrder(BinTree *t)
@@ -162,68 +169,68 @@ void PostOrder(BinTree *t)
 
 void LevleOrder(BinTree *t)
 {
-	_LevleOrder(t ->root);
+	_LevleOrder(t->root);
 }
 void _LevleOrder(BinTreeNode *t)//借助一个队列，先将一个根节点入队，出队，再入左右两个节点，出对(左节点)，直到对为空
 {
 	ListQueue mylistq;
 	ListQueueInit(&mylistq);
-	ListQueuePush(&mylistq,t);
-	while(!(ListQueueEmpty(&mylistq)))
+	ListQueuePush(&mylistq, t);
+	while (!(ListQueueEmpty(&mylistq)))
 	{
 		t = ListQueuetop(&mylistq);
 		ListQueuePop(&mylistq);
-		printf("%c ",t->data);
-		if(t->leftChild != NULL)
-			ListQueuePush(&mylistq,t->leftChild);
-		if(t->rightChild != NULL)
-			ListQueuePush(&mylistq,t->rightChild );
+		printf("%c ", t->data);
+		if (t->leftChild != NULL)
+			ListQueuePush(&mylistq, t->leftChild);
+		if (t->rightChild != NULL)
+			ListQueuePush(&mylistq, t->rightChild);
 	}
 }
 
-size_t _Height (BinTreeNode* t)
+size_t _Height(BinTreeNode* t)
 {
-	if (t ==NULL)
+	if (t == NULL)
 		return 0;
 	else
 	{
-		return _Height (t->leftChild)>_Height ( t->rightChild )?_Height (t->leftChild)+1:_Height (t->rightChild)+1 ;
+		return _Height(t->leftChild) > _Height(t->rightChild) ? _Height(t->leftChild) + 1 : _Height(t->rightChild) + 1;
 	}
 }
 size_t Height(BinTree *t)
 {
-	return _Height (t->root);
+	return _Height(t->root);
 }
 
-size_t _num (BinTreeNode* t)
+size_t _num(BinTreeNode* t)
 {
-	if (t ==NULL)
+	if (t == NULL)
 		return 0;
 	else
 	{
-		return _num (t->leftChild)+_num ( t->rightChild )+1;
+		return _num(t->leftChild) + _num(t->rightChild) + 1;
 	}
 }
 size_t num(BinTree *t)
 {
-	return  _num ( t->root);
+	return  _num(t->root);
 }
 
-BinTreeNode* _Find(BinTreeNode* t,DataType key)
+BinTreeNode* _Find(BinTreeNode* t, DataType key)
 {
 	BinTreeNode* p;
-	if(t == NULL)
+	if (t == NULL)
 		return NULL;
-	if(t->data == key)
+	if (t->data == key)
 		return t;
-	p=_Find(t->leftChild, key);
-	if(p != NULL)
+	p = _Find(t->leftChild, key);
+	if (p != NULL)
 		return p;
 	return _Find(t->rightChild, key);
 }
-BinTreeNode* Find(BinTree* t,DataType key)
+BinTreeNode* Find(BinTree* t, DataType key)
 {
-	BinTreeNode* pos = _Find(t->root ,key);
+	BinTreeNode* pos = _Find(t->root, key);
 	return pos;
 }
 
@@ -288,10 +295,10 @@ void _PreoderNor(BinTreeNode *t)
 		ListStactPush(&mystact, t);
 		while (!(ListStactEmpty(&mystact)))
 		{
-			q = ListStactTop(&mystact); 
+			q = ListStactTop(&mystact);
 			ListStactPop(&mystact);
 			printf("%c ", q->data);
-			if(q->rightChild != NULL)
+			if (q->rightChild != NULL)
 				ListStactPush(&mystact, q->rightChild);
 			if (q->leftChild != NULL)
 				ListStactPush(&mystact, q->leftChild);
@@ -303,50 +310,104 @@ void PreoderNor(BinTree *t)
 	_PreoderNor(t->root);
 }
 
-
-void _InOrderNoR(BinTreeNode *t);
-void InOrderNoR(BinTree *t);
-//void _PostOrderNoR(BinTreeNode *t);
-//void PostOrderNoR(BinTree *t);
-void _InOrderNoR(BinTreeNode *t)
+void _InorderNor(BinTreeNode *t)
 {
 	if (t != NULL)
 	{
-		if (t->leftChild != NULL)
+		BinTreeNode* q = t;
+		BinTreeNode* p ;
+		ListStact mystact;
+		ListStactInit(&mystact);
+		do
 		{
-			_PreoderNor(t->leftChild);
-		}
-		printf("%c ", t->data);
-		if (t->rightChild != NULL)
-		{
-			_PreoderNor(t->rightChild);
-		}
+			while (q != NULL)
+			{
+				ListStactPush(&mystact, q);  //先循环得到最左边的节点并且入栈
+				q = q->leftChild;
+			}
+			p = ListStactTop(&mystact); //出栈打印
+			ListStactPop(&mystact);
+			printf("%c ", p->data);
+			if (p->rightChild != NULL)  //这个时候循环到B，将B打印完时，B存在右孩子，进入B右孩子子树的进行下一轮循环
+				q = p->rightChild;
+		} while (!(ListStactEmpty(&mystact)) || q!=NULL);//栈为空时还没有打印A的右孩子分支
 	}
-
 }
-void InOrderNoR(BinTree *t)
+void InorderNor(BinTree *t)
 {
-	_InOrderNoR(t->root);
+	_InorderNor(t->root);
 }
-
-
-void _PostOrderNoR(BinTreeNode *t)
+void _PostorderNor(BinTreeNode *t)
 {
 	if (t != NULL)
 	{
-		if (t->leftChild != NULL)
+		ListStact mystact;
+		ListStactInit(&mystact);
+		BinTreeNode* p = t;
+		BinTreeNode* q;
+		BinTreeNode* pre = NULL;
+		do
 		{
-			_PreoderNor(t->leftChild);
-		}
-		if (t->rightChild != NULL)
-		{
-			_PreoderNor(t->rightChild);
-		}
-		printf("%c ", t->data);
+			while (p != NULL)
+			{
+				ListStactPush(&mystact, p);
+				p = p->leftChild;
+			}
+			q = ListStactTop(&mystact); //出栈打印
+			if (q->rightChild == NULL || q->rightChild == pre)// 当q->rightChild == pre相等时，表示q的右孩子已经
+			{	                                     //被打印过了，没有这个条件的话会陷入q的右孩子的死循环(也就是F)
+				ListStactPop(&mystact);
+				printf("%c ", q->data);
+				pre = q ;
+			}
+			else
+			{
+				p = q->rightChild;
+			}
+		} while (!(ListStactEmpty(&mystact)));
 	}
 }
-void PostOrderNoR(BinTree *t)
+void PostorderNor(BinTree *t)
 {
-	_PostOrderNoR(t->root);
+	_PostorderNor(t->root);
 }
+
+BinTreeNode* _BinTreeNodeCreateBy_LVR_LRV(char *lvr, char *lrv, int n)
+{
+	if (n == 0)
+		return NULL;
+	int k = 0;
+	while (lrv[n - 1] != lvr[k])
+	{
+		k++;
+	}
+	BinTreeNode *s = (BinTreeNode*)malloc(sizeof(BinTreeNode));
+	s->data = lvr[k];
+	s->rightChild = _BinTreeNodeCreateBy_LVR_LRV(lvr + k + 1, lrv + k, n - k - 1);
+	s->leftChild = _BinTreeNodeCreateBy_LVR_LRV(lvr, lrv, k);
+	return s;
+}
+void BinTreeNodeCreateBy_LVR_LRV(BinTree *t, char *lvr, char *lrv, int n)
+{
+	t->root = _BinTreeNodeCreateBy_LVR_LRV(lvr, lrv, n);
+}
+
+BinTreeNode* _BinTreeNodeCreateBy_VLR_LVR(char *vlr, char *lvr, int n)
+{
+	if (n == 0)
+		return NULL;
+	int k = 0;
+	while (vlr[0] != lvr[k])
+		k++;
+	BinTreeNode *s = (BinTreeNode*)malloc(sizeof(BinTreeNode));
+	s->data = lvr[k];
+	s->leftChild = _BinTreeNodeCreateBy_VLR_LVR(vlr+1, lvr+k-1, k-1);
+	s->rightChild = _BinTreeNodeCreateBy_VLR_LVR(vlr+n-k+1, lvr,  n-k-1);
+	return s;
+}
+void BinTreeNodeCreateBy_VLR_LVR(BinTree *t, char *vlr, char *lvr, int n)
+{
+	t->root = _BinTreeNodeCreateBy_VLR_LVR(vlr, lvr, n);
+}
+
 #endif
