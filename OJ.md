@@ -372,6 +372,8 @@ https://leetcode-cn.com/problems/intersection-of-two-linked-lists/submissions/
 
 9、[160. 相交链表]编写一个程序，找到两个单链表相交的起始节点。
 
+![QQ截图20200328104655](C:\Users\ASUS\Desktop\QQ截图20200328104655.jpg)
+
 ```c++
 /**
  * Definition for singly-linked list.
@@ -381,6 +383,9 @@ https://leetcode-cn.com/problems/intersection-of-two-linked-lists/submissions/
  *     ListNode(int x) : val(x), next(NULL) {}
  * };
  */
+/*
+假设
+*/
 class Solution {
 public:
     ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
@@ -394,6 +399,59 @@ public:
             cur_b=(cur_b==NULL ? headA:cur_b->next);
         }
         return cur_a;
+    }
+};
+```
+
+##### 10、[142. 环形链表 II](https://leetcode-cn.com/problems/linked-list-cycle-ii/)
+
+给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
+
+为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。说明：不允许修改给定的链表。
+
+https://leetcode-cn.com/problems/linked-list-cycle-ii/
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+     /*
+    非环部分长度为a,环的长度为b,则一个指针走a+b的s长度比到达环的位置，所以想办法让一个指针(slow)走a+b个位置
+    定义两个快慢指针，设slow走一步，fast走两步，当第一次相遇时，slow距离环起点的位置s为c, 
+    则得到下面s的式子1、fast=a+c+nb 2、slow=a+c 所以由 1、2得到3、fast=slow+b  同时4、 fast=2slow
+    则可以得到 slow=nb  fast=2nb ,所以让slow=nb(这里nb和b没有区别，因为环的长度为b，再走b步还是在原位置)
+    2、接下来就是再让slow再走a步就可以了，在从新定义一个指针到量表的头部，每一走一步，当新指针和slow再次相遇时slow刚好走了a步，所以slow一共
+    走了a+nb步，刚好停在了环的入口处
+      */  
+      //先判断是否有环和slow走b时的位置
+      if(head==NULL)
+      return head;
+      ListNode* slow=head;
+      ListNode* fast=head;
+      while(fast!=NULL&&fast->next!=NULL)
+      {
+          fast=fast->next->next;
+          slow=slow->next;
+          if(fast==slow)//说明第一次相交，slow走了nb步
+          {
+              ListNode* p=head;
+              while(p!=slow)
+              {
+                  slow=slow->next;
+                  p=p->next;
+              }
+              return p;
+          }
+      }
+      return NULL;
     }
 };
 ```
